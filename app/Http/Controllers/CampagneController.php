@@ -6,22 +6,18 @@ use App\Enums\StateEnum;
 use App\Traits\HasResponseMessageTrait;
 use App\Http\Requests\CampagneRequest;
 use App\Services\campagne\CampagneService;
-use App\Services\Responses\RestResponseService;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CampagneController extends Controller
 {
     use HasResponseMessageTrait;
 
     protected CampagneService $campagneService;
-    protected RestResponseService $restResponseService;
 
-    public function __construct(
-        CampagneService $campagneService,
-        RestResponseService $restResponseService
-    ) {
+    public function __construct(CampagneService $campagneService)
+    {
         $this->campagneService = $campagneService;
-        $this->restResponseService = $restResponseService;
     }
 
     public function index(Request $request)
@@ -33,41 +29,35 @@ class CampagneController extends Controller
     public function store(CampagneRequest $request)
     {
         $validated = $request->validated();
-
-        $newCampagne = $this->campagneService->create($validated);
-
+        $campagne = $this->campagneService->create($validated);
         $this->setResponseMessage('Campagne créée avec succès');
-        return $newCampagne;
+        return $campagne;
     }
 
     public function show(Request $request, string $id)
     {
         $campagne = $this->campagneService->getById($id);
         if (!$campagne) {
-            // Au lieu de `response()->json(...)`, on peut faire :
-            return $this->restResponseService->sendErrorResponse(
-                'Campagne introuvable',
-                StateEnum::NOT_FOUND,
-                404
-            );
+            throw new NotFoundHttpException('Campagne introuvable');
         }
-
         $this->setResponseMessage('Détails de la campagne');
         return $campagne;
     }
 
     public function update(CampagneRequest $request, string $id)
     {
+        $validated = $request->validated();
         try {
-            $this->campagneService->update($id, $request->validated());
+            $this->campagneService->update($id, $validated);
             $this->setResponseMessage('Campagne mise à jour avec succès');
             return [];
         } catch (\Exception $e) {
-            return $this->restResponseService->sendErrorResponse(
-                'Erreur lors de la mise à jour : ' . $e->getMessage(),
-                StateEnum::ERROR,
-                500
-            );
+            return app('App\Services\Responses\RestResponseService')
+                ->sendErrorResponse(
+                    'Erreur lors de la mise à jour : ' . $e->getMessage(),
+                    StateEnum::ERROR,
+                    500
+                );
         }
     }
 
@@ -78,11 +68,12 @@ class CampagneController extends Controller
             $this->setResponseMessage('Campagne supprimée avec succès');
             return [];
         } catch (\Exception $e) {
-            return $this->restResponseService->sendErrorResponse(
-                'Erreur lors de la suppression : ' . $e->getMessage(),
-                StateEnum::ERROR,
-                500
-            );
+            return app('App\Services\Responses\RestResponseService')
+                ->sendErrorResponse(
+                    'Erreur lors de la suppression : ' . $e->getMessage(),
+                    StateEnum::ERROR,
+                    500
+                );
         }
     }
 }

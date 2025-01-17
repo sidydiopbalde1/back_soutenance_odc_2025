@@ -1,5 +1,5 @@
 <?php
-namespace App\enums;
+namespace App\Enums;
 
 enum StateEnum: string
 {

@@ -2,9 +2,16 @@
 
 namespace App\Exceptions;
 
-use App\enums\StateEnum;
+use App\Enums\StateEnum;
 use App\Services\Responses\RestResponseService;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -13,15 +20,14 @@ class Handler extends ExceptionHandler
 
     public function __construct(RestResponseService $restResponseService)
     {
-        // Important: on appelle le parent avec app() si on a besoin du conteneur
         parent::__construct(app());
         $this->restResponseService = $restResponseService;
     }
 
     public function render($request, Throwable $e)
     {
-        // Gestion des exceptions de Validation
-        if ($e instanceof \Illuminate\Validation\ValidationException) {
+        // Gestion des erreurs de validation
+        if ($e instanceof ValidationException) {
             return $this->restResponseService->sendResponse(
                 $e->errors(),
                 StateEnum::VALIDATION_ERROR,
@@ -30,8 +36,8 @@ class Handler extends ExceptionHandler
             );
         }
 
-        // Erreur d’authentification
-        if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+        // Erreur d'authentification
+        if ($e instanceof AuthenticationException) {
             return $this->restResponseService->sendResponse(
                 null,
                 StateEnum::UNAUTHORIZED,
@@ -40,8 +46,18 @@ class Handler extends ExceptionHandler
             );
         }
 
+        // Autorisation refusée
+        if ($e instanceof AuthorizationException) {
+            return $this->restResponseService->sendResponse(
+                null,
+                StateEnum::ERROR,
+                'Accès refusé',
+                403
+            );
+        }
+
         // Ressource non trouvée
-        if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+        if ($e instanceof NotFoundHttpException) {
             return $this->restResponseService->sendResponse(
                 null,
                 StateEnum::NOT_FOUND,
@@ -50,7 +66,37 @@ class Handler extends ExceptionHandler
             );
         }
 
-        // Cas général
+        // Méthode HTTP non autorisée
+        if ($e instanceof MethodNotAllowedHttpException) {
+            return $this->restResponseService->sendResponse(
+                null,
+                StateEnum::ERROR,
+                'Méthode non autorisée',
+                405
+            );
+        }
+
+        // Trop de requêtes (Rate Limiting)
+        if ($e instanceof TooManyRequestsHttpException) {
+            return $this->restResponseService->sendResponse(
+                null,
+                StateEnum::ERROR,
+                'Trop de requêtes. Veuillez réessayer plus tard.',
+                429
+            );
+        }
+
+        // Autres exceptions HTTP générales
+        if ($e instanceof HttpException) {
+            return $this->restResponseService->sendResponse(
+                null,
+                StateEnum::ERROR,
+                $e->getMessage(),
+                $e->getStatusCode()
+            );
+        }
+
+        // Clause générique pour toutes les autres exceptions
         return $this->restResponseService->sendResponse(
             null,
             StateEnum::ERROR,

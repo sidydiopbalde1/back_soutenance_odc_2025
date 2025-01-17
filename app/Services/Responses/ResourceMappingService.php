@@ -9,17 +9,17 @@ use Exception;
 class ResourceMappingService
 {
     protected array $resourceMappings = [
-        // 'ModelClassName' => ResourceClass::class,
+        // 'NomDuModel' => ResourceClass::class
         'Campagne' => CampagneResource::class,
     ];
 
     protected array $collectionMappings = [
-        // 'ModelClassName' => ResourceCollectionClass::class,
+        // 'NomDuModel' => ResourceCollectionClass::class
         'Campagne' => CampagneCollection::class,
     ];
 
     /**
-     * Retourne la classe Resource à utiliser pour un modèle donné.
+     * Renvoie la classe Resource à utiliser pour un modèle.
      *
      * @throws Exception
      */
@@ -33,7 +33,7 @@ class ResourceMappingService
     }
 
     /**
-     * Retourne la classe ResourceCollection à utiliser pour un modèle donné.
+     * Renvoie la classe ResourceCollection à utiliser pour un modèle.
      *
      * @throws Exception
      */
