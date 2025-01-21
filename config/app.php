@@ -171,6 +171,8 @@ return [
         App\Providers\DatabaseServiceProvider::class,
         App\Providers\ResponseServiceProvider::class,
         App\Providers\CampagneServiceProvider::class,
+        App\Providers\MailServiceProvider::class,
+        App\Providers\UserServiceProvider::class,
     ])->toArray(),
 
     /*

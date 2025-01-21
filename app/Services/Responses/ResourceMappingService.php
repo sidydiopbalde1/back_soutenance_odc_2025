@@ -4,6 +4,8 @@ namespace App\Services\Responses;
 
 use App\Http\Resources\CampagneCollection;
 use App\Http\Resources\CampagneResource;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserResource;
 use Exception;
 
 class ResourceMappingService
@@ -11,11 +13,13 @@ class ResourceMappingService
     protected array $resourceMappings = [
         // 'NomDuModel' => ResourceClass::class
         'Campagne' => CampagneResource::class,
+        'User' => UserResource::class
     ];
 
     protected array $collectionMappings = [
         // 'NomDuModel' => ResourceCollectionClass::class
         'Campagne' => CampagneCollection::class,
+        'User' => UserCollection::class
     ];
 
     /**

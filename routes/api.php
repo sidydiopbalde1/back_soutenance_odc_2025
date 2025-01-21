@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampagneController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\FormatResponseMiddleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,4 +18,17 @@ Route::prefix('campagnes')
         Route::get('/{id}',    [CampagneController::class, 'show']);
         Route::put('/{id}',    [CampagneController::class, 'update']);
         Route::delete('/{id}', [CampagneController::class, 'destroy']);
-    });
+});
+
+Route::prefix('users')
+     ->middleware(['auth:api','permission:view-users,create-users'])
+     ->group(function(){
+            Route::get('/',         [UserController::class, 'index']);
+            Route::post('/',        [UserController::class,'store']);
+            Route::get('/{id}',     [UserController::class, 'show']);
+            Route::put('/{id}',     [UserController::class, 'update']);
+            Route::delete('/{id}',  [UserController::class, 'destroy']);
+});
+
+Route::post('login', [AuthController::class, 'login']);
+Route::middleware(['auth:api'])->put('change-password', [AuthController::class, 'changePassword']);
