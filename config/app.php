@@ -173,6 +173,7 @@ return [
         App\Providers\CampagneServiceProvider::class,
         App\Providers\MailServiceProvider::class,
         App\Providers\UserServiceProvider::class,
+        App\Providers\RoleServiceProvider::class,
     ])->toArray(),
 
     /*

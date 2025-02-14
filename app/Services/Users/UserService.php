@@ -16,14 +16,16 @@ class UserService implements IUser{
         $this->userRepository = $userRepository;
         $this->mailService = $mailService;
     }
-    public function getUsers(){
-        return $this->userRepository->allUsers();
+    public function getUsers($role = null, $search = null)
+    {
+        return $this->userRepository->allUsers($role, $search);
     }
+
     public function getUser($id){
         return $this->userRepository->getUser($id);
     }
     public function saveUser($data){
-
+        
         $user = [
             'nom' => $data['nom'],
             'prenom' => $data['prenom'],
@@ -33,6 +35,7 @@ class UserService implements IUser{
             'Matricule' => $data['Matricule'],
             'password' => Hash::make($data['password']),
             'first_connexion' => true,
+            'isActive' =>true,
             'role_id' => $data['role_id'],
         ];
         $message = "Vos informations de connexion";
@@ -41,12 +44,27 @@ class UserService implements IUser{
         
         return $user;
     }
-    public function updateUser($user){
-     return $this->userRepository->update($user);
-    }
+    public function updateUser($user, array $data)
+    {
+        return $this->userRepository->update($user, $data);
+    }    
 
-    public function deleteUser($id){
-        return $this->userRepository->delete($id);
+    public function deleteUser($user)
+    {
+        return $this->userRepository->delete($user); 
+    }
+    public function getUsertoRestore($id){
+        return $this->userRepository->getUsertoRestore($id);
+    }
+    public function restoreUser($user)
+    {
+        return $this->userRepository->restore($user);
+    }
+    public function getUserRestored(){
+        return $this->userRepository->getUserRestored();
+    }
+    public function activeOrDesactiveUser($id){
+       return  $this->userRepository->activeOrDesactiveUser($id);
     }
 
 }

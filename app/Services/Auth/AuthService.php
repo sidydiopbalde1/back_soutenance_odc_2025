@@ -16,6 +16,12 @@ class AuthService implements IAuth
      
         if (Auth::attempt($credentials)) {
             $user = User::find(Auth::user()->id);
+            if($user->first_connexion){
+               return throw new AuthenticationException('Votre première connexion, veuillez changer votre mot de passe.');
+            }
+            if(!$user->isActive){
+                return throw new AuthenticationException();
+            }
             $token = $user->createToken('PassportAuthToken')->accessToken;
             return [
                 'user'        => $user,
@@ -30,7 +36,7 @@ class AuthService implements IAuth
     {
         $user = User::find(Auth::user()->id);
         if (!$user || !$user->first_connexion) {
-            return [
+            return [    
                 'status' => 400,
                 'message' => 'Ce n\'est pas votre première connexion.',
               ];

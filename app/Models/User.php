@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;  
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
 
-    use HasFactory, Notifiable, HasApiTokens;
+    use SoftDeletes, HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
         'nom', 
@@ -24,6 +23,7 @@ class User extends Authenticatable
         'role_id', 
         'email',
         'first_connexion',
+        'isActive',
     ];
 
     protected $hidden = [
@@ -33,6 +33,7 @@ class User extends Authenticatable
     protected $casts= [
         'first_connexion'=> 'boolean'
     ];
+    protected $dates = ['deleted_at'];
     public function hasRole(string $role): bool
     {
         return $this->role === $role;

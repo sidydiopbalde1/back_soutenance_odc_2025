@@ -19,13 +19,14 @@ class AuthController extends Controller
         $this->authService = $authService;
     }
 
-    /**
-     * Connexion de l'utilisateur
-     */
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        $result = $this->authService->login($credentials);
+        $result= $this->authService->login($credentials);
+    
+        if(isset($result["message"])){
+            return $result;
+        }
         $this->setResponseMessage('Connexion réussie');
         return $result;
     }
@@ -46,3 +47,19 @@ class AuthController extends Controller
         return $this->authService->isAuthenticated();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

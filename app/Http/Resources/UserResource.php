@@ -22,6 +22,8 @@ class UserResource extends JsonResource
             'matricule' => $this->Matricule,
             'email' => $this->email,
             'role' => $this->role->libelle ?? null,
+            "isActive"=>$this->isActive,
+            "first_connexion"=>$this->first_connexion,
         ];
     }
 }
