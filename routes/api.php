@@ -38,7 +38,8 @@ Route::post('login', [AuthController::class, 'login']);
 Route::middleware(['auth:api'])->put('change-password', [AuthController::class, 'changePassword']);
 
 
-Route::prefix('services')->group(function () {
+Route::prefix('services')->middleware(['auth:api','permission:create-service'])
+    ->group(function(){
     Route::get('/', [ServiceController::class, 'index']);
     Route::post('/', [ServiceController::class, 'store']);
     Route::get('/{id}', [ServiceController::class, 'show']);
