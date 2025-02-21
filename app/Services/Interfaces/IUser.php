@@ -7,4 +7,5 @@ interface IUser {
     public function saveUser(array $userData);
     public function deleteUser(string $userId);
     public function getUserRestored();
+    public function showDeleteUser();
 }

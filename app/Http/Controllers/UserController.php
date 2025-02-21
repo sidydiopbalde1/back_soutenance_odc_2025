@@ -96,6 +96,15 @@ class UserController extends Controller{
         $this->setResponseMessage("Liste des utilisateur restaurés");
         return $users;
     }
+    public function showUserDeleted(){
+        $users = $this->userService->showDeleteUser();
+        if ($users->isEmpty()) {
+            $this->setResponseMessage("Aucun utilisateur supprimé");
+            return [];
+        }
+        $this->setResponseMessage("Liste des utilisateurs supprimés");
+        return $users;
+    }
     //active user
     public function activeOrDesactiveUser($id){
 

@@ -10,4 +10,5 @@ interface IUser{
     public function delete($user);
     public function getUserRestored();
     public function activeOrDesactiveUser($id);
+    public function showDeleteUser();
 }
