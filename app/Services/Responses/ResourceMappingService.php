@@ -19,7 +19,8 @@ class ResourceMappingService
         // 'NomDuModel' => ResourceClass::class
         'Campagne' => CampagneResource::class,
         'User' => UserResource::class,
-        'Service' => ServiceResource::class
+        'Service' => ServiceResource::class,
+        'Role' => RoleResource::class,
     ];
 
     protected array $collectionMappings = [
@@ -27,6 +28,7 @@ class ResourceMappingService
         'Campagne' => CampagneCollection::class,
         'User' => UserCollection::class,
         'Service' => ServiceCollection::class,
+        'Role' => RoleCollection::class,
     ];
 
     /**
