@@ -66,5 +66,8 @@ class UserService implements IUser{
     public function activeOrDesactiveUser($id){
        return  $this->userRepository->activeOrDesactiveUser($id);
     }
-
+    public function showDeleteUser(){
+        return $this->userRepository->showDeleteUser();
+    }
+    
 }

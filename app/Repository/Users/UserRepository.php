@@ -20,7 +20,7 @@ class UserRepository implements IUser{
             });
         }
     
-        return $query->paginate(10);
+        return $query->paginate(5);
     }
     
     public function getUser($id){
@@ -48,16 +48,16 @@ class UserRepository implements IUser{
     }
     public function getUserRestored()
     {
-        return User::onlyTrashed()->get();
+        return User::onlyTrashed()->paginate(2);
     }
-    
     public function activeOrDesactiveUser($id)
     {
         $user = User::find($id);
-
         $user->update(["isActive" => !$user->isActive]);
         return  $user;
-        
     }
     
+    public function showDeleteUser(){
+        return User::onlyTrashed()->paginate(5);
+    }
 }

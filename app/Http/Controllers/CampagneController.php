@@ -26,9 +26,9 @@ class CampagneController extends Controller
         return $this->campagneService->getAll();
     }
 
-    public function store(CampagneRequest $request)
+    public function store(Request $request)
     {
-        $validated = $request->validated();
+        $validated = $request->all();
         $campagne = $this->campagneService->create($validated);
         $this->setResponseMessage('Campagne créée avec succès');
         return $campagne;
@@ -77,3 +77,8 @@ class CampagneController extends Controller
         }
     }
 }
+
+
+
+
+

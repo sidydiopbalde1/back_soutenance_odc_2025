@@ -53,7 +53,7 @@ class UpdateUserRequest extends FormRequest
                 'max:255',
                 Rule::unique('users', 'login')->ignore($this->route('id')),
             ],
-            'password' => 'sometimes|string|min:6|confirmed',
+            // 'password' => 'sometimes|string|min:6|confirmed',
             'role_id' => [
                 'sometimes',
                 'integer',
@@ -88,9 +88,9 @@ class UpdateUserRequest extends FormRequest
             'login.max' => 'Le login ne peut pas dépasser 255 caractères.',
             'login.unique' => 'Ce login est déjà utilisé.',
 
-            'password.string' => 'Le mot de passe doit être une chaîne de caractères.',
-            'password.min' => 'Le mot de passe doit contenir au moins 6 caractères.',
-            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            // 'password.string' => 'Le mot de passe doit être une chaîne de caractères.',
+            // 'password.min' => 'Le mot de passe doit contenir au moins 6 caractères.',
+            // 'password.confirmed' => 'Les mots de passe ne correspondent pas.',
 
             'role_id.integer' => 'Le rôle doit être un identifiant numérique.',
             'role_id.exists' => 'Le rôle sélectionné est invalide.',
