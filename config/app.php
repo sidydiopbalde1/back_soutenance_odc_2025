@@ -174,6 +174,7 @@ return [
         App\Providers\MailServiceProvider::class,
         App\Providers\UserServiceProvider::class,
         App\Providers\RoleServiceProvider::class,
+        App\Providers\ServiceServiceProvider::class,
     ])->toArray(),
 
     /*
