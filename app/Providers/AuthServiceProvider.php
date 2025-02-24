@@ -7,6 +7,7 @@ use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvid
 use Laravel\Passport\Passport;
 use App\Services\Auth\AuthService;
 use App\Services\Interfaces\IAuth as IAuthService;
+use App\Services\Logs\LogService;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -20,9 +21,8 @@ class AuthServiceProvider extends ServiceProvider
     ];
     public function register(): void
     {
-        $this->app->singleton(IAuthService::class, function () {
-            
-            return new AuthService();
+        $this->app->singleton(IAuthService::class, function ($app) {
+            return new AuthService($app->make(LogService::class));
         });
     }
     /**
