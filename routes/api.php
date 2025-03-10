@@ -22,7 +22,7 @@ Route::prefix('roles')
 });
 
 Route::prefix('users')->middleware(['auth:api','permission:view-users,create-users,edit-users,delete-users'])
-    ->group(function(){
+->group(function(){
         Route::get('/',          [UserController::class, 'index']);
         Route::post('/',         [UserController::class,'store']);
         Route::put('/{id}',      [UserController::class, 'update']);
@@ -35,15 +35,22 @@ Route::prefix('users')->middleware(['auth:api','permission:view-users,create-use
 });
         
 Route::post('login', [AuthController::class, 'login']);
-Route::middleware(['auth:api'])->put('change-password', [AuthController::class, 'changePassword']);
+Route::post('change-password', [AuthController::class, 'changePassword']);
 
 
-Route::prefix('services')->middleware(['auth:api','permission:create-service'])
+Route::prefix('services')->middleware(['auth:api'])
     ->group(function(){
-    Route::get('/', [ServiceController::class, 'index']);
-    Route::post('/', [ServiceController::class, 'store']);
-    Route::get('/{id}', [ServiceController::class, 'show']);
-    Route::put('/{id}', [ServiceController::class, 'update']);
+        Route::get('/', [ServiceController::class, 'index']);
+        Route::post('/', [ServiceController::class, 'store']);
+        Route::get('/{id}', [ServiceController::class, 'show']);
+        Route::put('/{id}', [ServiceController::class, 'update']);
     Route::delete('/{id}', [ServiceController::class, 'destroy']);
     Route::post('/restore/{id}', [ServiceController::class, 'restore']);
 });
+
+
+
+
+
+
+

@@ -31,7 +31,7 @@
                         </li>
                     </ul>
                     <p style="text-align: center; margin: 30px 0;">
-                        <a href="{{ $loginUrl }}" style="display: inline-block; text-decoration: none; background-color: #FF7A00; color: #ffffff; padding: 12px 20px; border-radius: 5px; font-size: 16px;">
+                        <a href="{{ $passworChangeUrl }}" style="display: inline-block; text-decoration: none; background-color: #FF7A00; color: #ffffff; padding: 12px 20px; border-radius: 5px; font-size: 16px;">
                             Se connecter
                         </a>
                     </p>

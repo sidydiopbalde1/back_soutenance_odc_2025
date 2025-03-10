@@ -20,7 +20,7 @@ class MongoDBService implements IDatabase
     protected function getDatabaseNameFromUri(string $mongoUri): string
     {
         $parsedUrl = parse_url($mongoUri);
-        return ltrim($parsedUrl['path'], '/');
+        return trim($parsedUrl['path'], '/');
     }
 
     public function getCollection(string $collectionName): array

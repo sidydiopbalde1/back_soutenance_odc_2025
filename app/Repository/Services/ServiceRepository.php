@@ -9,7 +9,7 @@ class ServiceRepository implements IService
 {
     public function getAllServices()
     {
-        return Service::paginate(5);
+        return Service::all();
     }
     public function getServiceById($serviceId)
     {
@@ -44,3 +44,5 @@ class ServiceRepository implements IService
         return false;
     }
 }
+
+

@@ -34,23 +34,46 @@ class AuthService implements IAuth
 
     public function changePassword(array $data)
     {
-        $user = User::find(Auth::user()->id);
-        if (!$user || !$user->first_connexion) {
-            return [    
-                'status' => 400,
-                'message' => 'Ce n\'est pas votre première connexion.',
-              ];
+        // Vérifier que l'ID utilisateur est fourni dans les données
+        if (!isset($data['userId'])) {
+            return response()->json([
+                'status'  => 400,
+                'message' => 'L\'ID utilisateur est requis.'
+            ], 400);
         }
-        Validator::make($data, [
+    
+        // Récupérer l'utilisateur à partir de l'ID fourni par le front
+        $user = User::find($data['userId']);
+    
+        // Vérifier que l'utilisateur existe et que c'est bien sa première connexion
+        if (!$user || !$user->first_connexion) {
+            return response()->json([
+                'status'  => 400,
+                'message' => 'Ce n\'est pas votre première connexion.'
+            ], 400);
+        }
+    
+        // Valider les données du formulaire
+        $validator = Validator::make($data, [
             'password' => 'required|string|min:6|confirmed',
         ]);
-
-        $user->password =  Hash::make($data['password']);
+    
+        if ($validator->fails()) {
+            return response()->json([
+                'status'  => 422,
+                'message' => 'Les données fournies sont invalides.',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+    
+        // Mettre à jour le mot de passe et désactiver le flag first_connexion
+        $user->password = Hash::make($data['password']);
         $user->first_connexion = false;
         $user->save();
     
         return $user;
     }
+    
     
          
     public function logout(): void

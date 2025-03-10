@@ -8,7 +8,7 @@ class UserRepository implements IUser{
     public function allUsers($role = null, $search = null)
     {
         $query = User::query();
-    
+     
         if ($role) {
             $query->where('role_id', $role);
         }

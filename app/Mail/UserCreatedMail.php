@@ -35,6 +35,7 @@ class UserCreatedMail extends Mailable
                 'user' => $this->user,
                 'defaultPassword' => $this->user->password,
                 'loginUrl' => url('/change-password'), 
+                'passworChangeUrl' => config('app.frontend_url'). '/change-password?user=' . $this->user->id
             ]);
     }
 }

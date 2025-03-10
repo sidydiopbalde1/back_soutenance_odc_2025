@@ -25,25 +25,27 @@ class UserService implements IUser{
         return $this->userRepository->getUser($id);
     }
     public function saveUser($data){
-        
-        $user = [
-            'nom' => $data['nom'],
-            'prenom' => $data['prenom'],
-            'telephone' => $data['telephone'],
-            'email' => $data['email'],
-            'login' => $data['login'],
-            'Matricule' => $data['Matricule'],
-            'password' => Hash::make($data['password']),
-            'first_connexion' => true,
-            'isActive' =>true,
-            'role_id' => $data['role_id'],
-        ];
-        $message = "Vos informations de connexion";
-        $user = $this->userRepository->create($data);
-        $this->mailService->sendEmail($user, $message);
-        
-        return $user;
+            $user = [
+                'nom' => $data['nom'],
+                'prenom' => $data['prenom'],
+                'telephone' => $data['telephone'],
+                'email' => $data['email'],
+                'login' => $data['login'],
+                'Matricule' => $data['Matricule'],
+                'password' => Hash::make($data['password']),
+                'first_connexion' => true,
+                'isActive' => true,
+                'role_id' => $data['role_id'],
+            ];
+            
+            $user = $this->userRepository->create($data);  
+            $message = "Vos informations de connexion";
+            
+            $this->mailService->sendEmail($user, $message);
+            
+            return $user;
     }
+
     public function updateUser($user, array $data)
     {
         return $this->userRepository->update($user, $data);
