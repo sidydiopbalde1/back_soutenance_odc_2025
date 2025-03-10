@@ -9,6 +9,7 @@ use App\Repository\Users\UserRepository;
 
 use Illuminate\Support\ServiceProvider;
 use App\Services\Mail\MailService;
+use App\Services\Logs\LogService;
 class UserServiceProvider extends ServiceProvider
 {
     /**
@@ -21,7 +22,7 @@ class UserServiceProvider extends ServiceProvider
         });
         $this->app->singleton(IUserService::class, function ($app) {
            
-            return new UserService($app->make(UserRepository::class),$app->make(MailService::class));
+            return new UserService($app->make(UserRepository::class),$app->make(MailService::class),$app->make(LogService::class));
         });
     }
 

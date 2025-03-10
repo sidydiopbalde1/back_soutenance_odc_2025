@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CampagneController;
+use App\Http\Controllers\LogController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\UserController;
@@ -48,9 +49,7 @@ Route::prefix('services')->middleware(['auth:api'])
     Route::post('/restore/{id}', [ServiceController::class, 'restore']);
 });
 
-
-
-
-
-
-
+Route::prefix('logs')->middleware(['auth:api'])
+    ->group(function(){
+    Route::get('/', [LogController::class, 'index']);
+});

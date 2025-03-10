@@ -5,6 +5,7 @@ use App\Services\Interfaces\IAuth;
 use Illuminate\Http\Request;
 use App\Traits\HasResponseMessageTrait;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Auth\AuthenticationException;
  
 
 class AuthController extends Controller
@@ -21,14 +22,16 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
-        $result= $this->authService->login($credentials);
-    
-        if(isset($result["message"])){
-            return $result;
-        }
+     
+        $result = $this->authService->login($credentials);
+            if (!$result) {
+                $this->setResponseMessage('Connexion réussie');
+                return [];
+            }
         $this->setResponseMessage('Connexion réussie');
         return $result;
     }
+
     public function changePassword(Request $request)
     {
         $user = $this->authService->changePassword($request->all());
@@ -46,19 +49,3 @@ class AuthController extends Controller
         return $this->authService->isAuthenticated();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

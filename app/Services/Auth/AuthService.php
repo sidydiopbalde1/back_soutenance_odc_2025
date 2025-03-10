@@ -1,81 +1,102 @@
-<?php 
+<?php
 
 namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Services\Interfaces\IAuth;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Hash;
+use App\Services\Logs\LogService;
+use App\Services\Auth\Validator;
+use Illuminate\Auth\AuthenticationException;
 
 class AuthService implements IAuth
-{  
+{
+    private LogService $logService;
+
+    public function __construct(LogService $logService)
+    {
+        $this->logService = $logService;
+    }
+
     public function login(array $credentials)
     {
-     
-        if (Auth::attempt($credentials)) {
-            $user = User::find(Auth::user()->id);
-            if($user->first_connexion){
-               return throw new AuthenticationException('Votre première connexion, veuillez changer votre mot de passe.');
-            }
-            if(!$user->isActive){
-                return throw new AuthenticationException();
-            }
-            $token = $user->createToken('PassportAuthToken')->accessToken;
-            return [
-                'user'        => $user,
-                'token'       => $token
-            ];
+        if (!Auth::attempt($credentials)) {
+            $this->logService->logAction(
+                'Login',
+                'Tentative de connexion échouée pour l\'email: ' . $credentials['email'] . 'le' . now()->format('d-m-Y H:i:s'),
+                'failed'
+            );
+            throw new AuthenticationException('Identifiants incorrects');
         }
-      
-        return throw new AuthenticationException();
+
+        $user = User::find(Auth::user()->id);
+
+        if ($user->first_connexion) {
+            $this->logService->logAction(
+                'Login',
+                'Utilisateur ' . $user->nom . ' ' . $user->prenom . ' doit changer son mot de passe pour la première connexion',
+                'warning'
+            );
+            throw new AuthenticationException('Votre première connexion, veuillez changer votre mot de passe.');
+        }
+
+        if (!$user->isActive) {
+            $this->logService->logAction(
+                'Login',
+                'Compte désactivé pour l\'utilisateur ' . $user->nom . ' ' . $user->prenom,
+                'warning'
+            );
+            throw new AuthenticationException('Votre compte est désactivé.');
+        }
+
+        // Loguer la connexion réussie
+        $this->logService->logAction(
+            'Login',
+            'Utilisateur ' . $user->nom . ' ' . $user->prenom . ' s\'est connecté avec succès le ' . now()->format('d-m-Y H:i:s'),
+            'success'
+        );
+
+        // Générer le token d'authentification
+        $token = $user->createToken('PassportAuthToken')->accessToken;
+
+        return [
+                'user' => $user,
+                'token' => $token
+                ];
     }
 
     public function changePassword(array $data)
     {
-        // Vérifier que l'ID utilisateur est fourni dans les données
-        if (!isset($data['userId'])) {
-            return response()->json([
-                'status'  => 400,
-                'message' => 'L\'ID utilisateur est requis.'
-            ], 400);
-        }
-    
-        // Récupérer l'utilisateur à partir de l'ID fourni par le front
-        $user = User::find($data['userId']);
-    
-        // Vérifier que l'utilisateur existe et que c'est bien sa première connexion
+        $user = User::find(Auth::user()->id);
         if (!$user || !$user->first_connexion) {
-            return response()->json([
-                'status'  => 400,
-                'message' => 'Ce n\'est pas votre première connexion.'
-            ], 400);
+            return [
+                'status' => 400,
+                'message' => 'Ce n\'est pas votre première connexion.',
+            ];
         }
-    
-        // Valider les données du formulaire
-        $validator = Validator::make($data, [
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-    
-        if ($validator->fails()) {
-            return response()->json([
-                'status'  => 422,
-                'message' => 'Les données fournies sont invalides.',
-                'errors'  => $validator->errors()
-            ], 422);
-        }
-    
-        // Mettre à jour le mot de passe et désactiver le flag first_connexion
-        $user->password = Hash::make($data['password']);
+        // Validator::make($data, [
+        //     'password' => 'required|string|min:6|confirmed',
+        // ]);
+
+        $user->password =  Hash::make($data['password']);
         $user->first_connexion = false;
         $user->save();
-    
-        return $user;
+
+        // Loguer le changement de mot de passe
+        $this->logService->logAction(
+            'ChangePassword',
+            'Utilisateur ' . $user->nom . ' ' . $user->prenom . ' a changé son mot de passe',
+            'success'
+        );
+
+        return [
+            'message' => 'Mot de passe changé avec succès',
+            'data' => $user
+        ];
     }
-    
-    
-         
+
+
     public function logout(): void
     {
         $user = User::find(Auth::user()->id);
@@ -83,9 +104,15 @@ class AuthService implements IAuth
         if ($user) {
             // Révoquer tous les tokens de l'utilisateur
             $user->tokens()->delete();
+
+            // Loguer la déconnexion
+            $this->logService->logAction(
+                'Logout',
+                'Utilisateur ' . $user->nom . ' ' . $user->prenom . ' s\'est déconnecté',
+                'success'
+            );
         }
 
-        // Déconnecter l'utilisateur
         Auth::logout();
     }
 
