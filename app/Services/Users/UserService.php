@@ -92,13 +92,13 @@ class UserService implements IUser{
             throw $e;
         }
     }
-<<<<<<< HEAD
+
     public function showDeleteUser(){
         return $this->userRepository->showDeleteUser();
     }
     
-}
-=======
+
+
 
     public function getUsertoRestore($id){
         try {
@@ -148,4 +148,3 @@ class UserService implements IUser{
         }
     }
 }
->>>>>>> 0be23a9ef3a5bf67512b1f2ae2e66be57a0935af

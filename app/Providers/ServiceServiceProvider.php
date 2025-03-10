@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Repository\Interfaces\IService as InterfacesServiceRepository;
 use App\Repository\Services\ServiceRepository;
 use App\Services\Interfaces\IService as InterfacesServiceService;
+use App\Services\Logs\LogService;
 use App\Services\Service\ServiceService;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +21,7 @@ class ServiceServiceProvider extends ServiceProvider
         });
         $this->app->singleton(InterfacesServiceService::class, function ($app) {
            
-            return new ServiceService($app->make(ServiceRepository::class));
+            return new ServiceService($app->make(ServiceRepository::class),$app->make(LogService::class));
         });
     }
     

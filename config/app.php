@@ -175,6 +175,7 @@ return [
         App\Providers\UserServiceProvider::class,
         App\Providers\RoleServiceProvider::class,
         App\Providers\ServiceServiceProvider::class,
+        App\Providers\LogServiceProvider::class,
     ])->toArray(),
 
     /*
