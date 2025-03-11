@@ -9,6 +9,10 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::prefix('roles')
+    ->group(function () {
+        Route::get('/',        [RoleController::class, 'index']);
+});
 Route::prefix('campagnes')
     ->group(function () {
         Route::get('/',        [CampagneController::class, 'index']);
@@ -16,10 +20,6 @@ Route::prefix('campagnes')
         Route::get('/{id}',    [CampagneController::class, 'show']);
         Route::put('/{id}',    [CampagneController::class, 'update']);
         Route::delete('/{id}', [CampagneController::class, 'destroy']);
-});
-Route::prefix('roles')
-    ->group(function () {
-        Route::get('/',        [RoleController::class, 'index']);
 });
 
 Route::prefix('users')->middleware(['auth:api','permission:view-users,create-users,edit-users,delete-users'])

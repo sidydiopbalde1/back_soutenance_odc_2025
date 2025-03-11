@@ -14,11 +14,12 @@ class RoleController extends Controller{
     public function __construct(RoleService $roleService){
         $this->roleService = $roleService;
     }
-    public function index(Request $request)
+    public function index()
     {
         $roles = $this->roleService->getRoles();
+        // dd($roles);
         if(!$roles){
-            $this->setResponseMessage("Aucun roletrouvé");
+            $this->setResponseMessage("Aucun role trouvé");
             return [];
         }
         $this->setResponseMessage("Liste des roles");

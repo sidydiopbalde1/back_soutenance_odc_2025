@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class RoleCollection extends ResourceCollection
 {
-    public $collects = UserResource::class;
+    public $collects = RoleResource::class;
     use HasPaginationTrait;
     /**
      * Transforme la collection en tableau.
