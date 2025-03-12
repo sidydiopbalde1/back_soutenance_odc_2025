@@ -101,8 +101,6 @@ class UserService implements IUser{
     }
     
 
-
-
     public function getUsertoRestore($id){
         try {
             return $this->userRepository->getUsertoRestore($id);

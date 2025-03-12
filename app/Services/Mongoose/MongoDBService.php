@@ -52,4 +52,20 @@ class MongoDBService implements IDatabase
         $result = $this->database->selectCollection($collectionName)->deleteOne(['_id' => $documentId]);
         return $result->getDeletedCount() > 0;
     }
+
+    public function getAllDocuments(string $collectionName): array
+    {
+        return $this->database->selectCollection($collectionName)->find()->toArray();
+    }
+
+    public function updateDocument(string $collectionName, string $documentId, array $data): bool
+    {
+        $result = $this->database->selectCollection($collectionName)->updateOne(
+            ['_id' => $documentId],
+            ['$set' => $data]
+        );
+
+        return $result->getModifiedCount() > 0;
+    }
+
 }

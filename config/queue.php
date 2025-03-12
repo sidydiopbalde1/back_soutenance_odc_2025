@@ -71,6 +71,14 @@ return [
             'after_commit' => false,
         ],
 
+        // Add a new connection for MongoDB
+        'mongodb' => [
+            'driver' => 'mongodb',
+            'connection' => 'mongodb',
+            'queue' => 'default',
+            'retry_after' => 90,
+        ],
+
     ],
 
     /*
