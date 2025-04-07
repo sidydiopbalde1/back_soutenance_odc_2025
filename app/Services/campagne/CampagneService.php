@@ -3,6 +3,7 @@
 namespace App\Services\campagne;
 
 use App\Services\Interfaces\IDatabase;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
@@ -30,11 +31,11 @@ class CampagneService
 
         // Définition des paramètres de pagination
         $perPage = (int) request()->get('per_page', 3);
-        $page    = (int) request()->get('page', 1);
-        $total   = $collection->count();
+        $page = (int) request()->get('page', 1);
+        $total = $collection->count();
 
         // Calcul de l'offset et extraction des éléments pour la page courante
-        $startingPoint    = ($page - 1) * $perPage;
+        $startingPoint = ($page - 1) * $perPage;
         $currentPageItems = $collection->slice($startingPoint, $perPage)->values();
 
         // Construction du paginator Laravel
@@ -44,7 +45,7 @@ class CampagneService
             $perPage,
             $page,
             [
-                'path'  => request()->url(),
+                'path' => request()->url(),
                 'query' => request()->query(),
             ]
         );
@@ -97,6 +98,25 @@ class CampagneService
         }
         // Si elle existe, on procède à la suppression
         return $this->databaseService->deleteDocument('campagnes', $id);
+    }
+
+    public function getActiveCampaignsOfTheDay()
+    {
+        $allCampagnes = collect($this->databaseService->getCollection('campagnes'));
+
+        // Filtrer les campagnes actives du jour
+        $today = Carbon::today();   
+
+        $activeCampaigns = $allCampagnes->filter(function ($campagne) use ($today) {
+            $startDate = Carbon::parse($campagne['dateStart']);
+            $endDate = Carbon::parse($campagne['dateEnd']);
+            return $campagne['status'] === 'en cours' && $today->between($startDate, $endDate);
+        });
+
+        // Grouper par code de service:
+        return $activeCampaigns->groupBy(function ($campagne) {
+            return collect($campagne['services'])->pluck('code')->first();
+        });
     }
 }
 

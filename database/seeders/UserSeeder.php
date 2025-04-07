@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
                 'nom' => 'Balde',
                 'prenom' => 'Sidy Diop',
                 'telephone' => '784316538',
-                 'Matricule' => 'stg_balde87194',
+                'Matricule' => 'stg_balde87194',
                 'login' => 'stg_balde87194@orange-sonatel.com',
                 'password' => Hash::make('passer123'),
                 'role_id' => 1,

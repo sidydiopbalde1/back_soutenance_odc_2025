@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StateEnum;
+use App\Services\Campagne\RewardService;
 use App\Traits\HasResponseMessageTrait;
 use App\Http\Requests\CampagneRequest;
 use App\Services\campagne\CampagneService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -14,10 +16,12 @@ class CampagneController extends Controller
     use HasResponseMessageTrait;
 
     protected CampagneService $campagneService;
+    protected $rewardService;
 
-    public function __construct(CampagneService $campagneService)
+    public function __construct(CampagneService $campagneService, RewardService $rewardService)
     {
         $this->campagneService = $campagneService;
+        $this->rewardService = $rewardService;
     }
 
     public function index(Request $request)
@@ -76,6 +80,44 @@ class CampagneController extends Controller
                 );
         }
     }
+
+    // Récupération des campagnes du jour:
+    public function campaignsOfTheDay(): JsonResponse
+    {
+        $campaigns = $this->campagneService->getActiveCampaignsOfTheDay();
+
+        return response()->json([
+            'message' => 'Campagnes du jour',
+            'campagnes' => $campaigns
+        ]);
+    }
+
+    // Récupération des transactions et campagnes
+    public function processRewards(): JsonResponse
+    {
+        $data = $this->rewardService->processTransactionsForRewards();
+
+        return response()->json([
+            'message' => 'Traitement des récompenses terminés',
+            'data' => $data
+        ]);
+    }
+
+    public function matchTransactionsWithCampaigns(): JsonResponse
+    {
+        // $data = $this->rewardService->matchTransactionsWhithCampaigns();
+        return response()->json([
+            $this->rewardService->matchTransactionsWhithCampaigns()
+        ]);
+
+        // return response()->json([
+        //     'message' => 'Correspondances effectuées',
+        //     'data' => $data
+        // ]);
+    }
+
+
+
 }
 
 
